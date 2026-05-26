@@ -6,7 +6,9 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: [true, "Email must be unique"],
+    unique: true,
+    lowercase: true,
   },
 });
 const UsersModel = mongoose.model("users", userSchema); //This will automatically create collections/tables

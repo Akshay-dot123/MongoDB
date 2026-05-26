@@ -12,11 +12,19 @@ function App() {
   const createUser = () => {
     axios
       .post("http://localhost:3000/user/createUser", { name: newUser, email: newEmail })
-      .then((res) => {
+      .then(() => {
         // This will add new user to existing list withou
         setUsersList([...usersList,{ name: newUser, email: newEmail }]);
         alert("User created successfully");
-      });
+      }).catch((err) => { 
+        console.log("Error creating user", err);
+        console.log("DATA:", err.response?.data);
+      if (err.response?.status === 409) {
+        alert("Email already exists");
+      } else {
+        alert("Something went wrong");
+      }
+      })
   };
   return (
     <>

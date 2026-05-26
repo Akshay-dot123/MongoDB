@@ -1,4 +1,5 @@
 const UserModel = require("../models/Users");
+const CreateSchema = require("../validations/userValidation");
 async function getUsers(req, res) {
   try {
     const data = await UserModel.find({});
@@ -21,13 +22,19 @@ async function getUser(req, res) {
 
 async function createUser(req, res) {
   try {
-    const user = req.body;
-    console.log("New user created", user);
-    const newUser = new UserModel(user);
+  const { value, error } = CreateSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+    const { name, email } = value;
+    const newUser = new UserModel({ name, email });
     await newUser.save();
-    res.json(user);
+    res.json(newUser);
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    console.log("FULL ERROR:", err);
+    res.status(500).json({ error: err.message });
   }
 }
 module.exports = { getUsers, getUser, createUser };
